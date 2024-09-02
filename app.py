@@ -2,11 +2,13 @@ from flask import Flask, jsonify, request
 from flask_restx import Api, Resource, fields
 from model import db, Book, Student, Recipe, Post, Comment, Supplier
 from config import DevConfig
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object(DevConfig)
 db.init_app(app)
-
+migrate = Migrate(app, db)
 api = Api(app, version= '2.5', title='Sample API', description='A Sample Flask API')
     
 # book serializer
