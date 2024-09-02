@@ -71,3 +71,20 @@ class Supplier(db.Model):
     def __repr__(self):
         return f"<Supplier {self.SupplierName, self.EmailAddress, self.PhoneNumber, self.DateOfBirth, self.PostalAddress, self.Address, self.County, self.SubCounty} >"
 
+
+class Users(db.Model):
+    Id = db.Column(db.Integer(), primary_key = True)
+    FullNames = db.Column(db.String(100), nullable = False)
+    Username = db.Column(db.String(100), nullable = False)
+    Password = db.Column(db.String(255), nullable = False)
+    EmailAddress = db.Column(db.String(255), nullable = False)
+    PhoneNumber = db.Column(db.String(15), nullable = False)
+    DateOfBirth = db.Column(db.DateTime, nullable = False)
+    ProfilePicture = db.Column(db.String(255), nullable = True)
+    Address = db.Column(db.String(200), nullable = False)
+    CreatedOn = db.Column(db.DateTime, default = datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f"<Users {self.FullNames, self.Username, self.EmailAddress, self.Address}>"
+
+

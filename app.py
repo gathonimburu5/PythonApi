@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_restx import Api, Resource, fields
-from model import db, Book, Student, Recipe, Post, Comment, Supplier
+from model import db, Book, Student, Recipe, Post, Comment, Supplier, Users
 from config import DevConfig
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
@@ -83,6 +83,48 @@ supplier_model = api.model(
         'CreatedOn': fields.Date()
     }
 )
+#register user serializer
+register_model = api.model(
+    'Signup',
+    {
+        'Id': fields.Integer(),
+        'FullNames': fields.String(),
+        'Username': fields.String(),
+        'Password': fields.String(),
+        'EmailAddress': fields.String(),
+        'PhoneNumber': fields.String(),
+        'DateOfBirth': fields.Date(),
+        'ProfilePicture': fields.String(),
+        'Address': fields.String(),
+        'CreatedOn': fields.Date()
+    }
+)
+
+@api.route("/signup")
+class SignupResource(Resource):
+    @api.marshal_with(register_model, code = 200)
+    @api.expect(register_model)
+    def post(self):
+        data = request.get_json()
+        register_data = Users(
+            FullNames = data.get('FullNames'),
+            Username = data.get('Username'),
+            Password = generate_password_hash(data.get('Password')),
+            EmailAddress = data.get('EmailAddress'),
+            PhoneNumber = data.get('PhoneNumber'),
+            DateOfBirth = data.get('DateOfBirth'),
+            ProfilePicture = data.get('ProfilePicture'),
+            Address = data.get('Address')
+        )
+        db.session.add(register_data)
+        db.session.commit()
+        return register_data, 200
+
+@api.route("/login")
+class LoginResource(Resource):
+    def post(self): 
+        pass
+
 
 @api.route("/supplier")
 class SuppliersResource(Resource):
@@ -362,7 +404,7 @@ class BooksResource(Resource):
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'Book': Book, 'Student' : Student, 'Recipe' : Recipe, 'Post' : Post, 'Comment' : Comment, 'Supplier': Supplier}
+    return {'db': db, 'Book': Book, 'Student' : Student, 'Recipe' : Recipe, 'Post' : Post, 'Comment' : Comment, 'Supplier': Supplier, 'Users': Users}
 
 if __name__ == '__main__':
     app.run(host="localhost", debug=True, port=8888)
