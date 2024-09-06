@@ -53,6 +53,11 @@ class SignupResource(Resource):
         db.session.add(register_data)
         db.session.commit()
         return register_data, 200
+    
+    @auth_nc.marshal_list_with(register_model, code = 200)
+    def get(self):
+        register_details = Users.query.all()
+        return register_details, 200
 
 @auth_nc.route("/login")
 class LoginResource(Resource):

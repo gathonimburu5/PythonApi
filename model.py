@@ -87,4 +87,13 @@ class Users(db.Model):
     def __repr__(self) -> str:
         return f"<Users {self.FullNames, self.Username, self.EmailAddress, self.Address}>"
 
+class Accounts(db.Model):
+    Id = db.Column(db.Integer(), primary_key = True)
+    Name = db.Column(db.String(100), nullable = False)
+    Group = db.Column(db.String(100), nullable = False)
+    Currency = db.Column(db.String(100), nullable = False)
+    StartBalance = db.Column(db.Numeric(24,2), nullable = False)
+    CreatedOn = db.Column(db.DateTime(), default = datetime.utcnow)
 
+    def __repr__(self):
+        return f"<Accounts {self.Name, self.Group, self.Currency, self.StartBalance}>"
