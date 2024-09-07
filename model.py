@@ -97,3 +97,19 @@ class Accounts(db.Model):
 
     def __repr__(self):
         return f"<Accounts {self.Name, self.Group, self.Currency, self.StartBalance}>"
+
+class Customer(db.Model):
+    Id= db.Column(db.Integer(), primary_key = True)
+    Code = db.Column(db.String(50), nullable = False)
+    CustomerName = db.Column(db.String(100), nullable = False)
+    EmailAddress = db.Column(db.String(255), nullable = False, unique = True)
+    PhoneNumber = db.Column(db.String(15), nullable = False)
+    PostalAddress = db.Column(db.String(100), nullable = False)
+    Address = db.Column(db.String(100), nullable = False)
+    CreatedOn = db.Column(db.DateTime(), default = datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f"<Customer {self.Code, self.CustomerName, self.EmailAddress}>"
+
+
+

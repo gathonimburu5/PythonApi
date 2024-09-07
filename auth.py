@@ -13,11 +13,11 @@ register_model = auth_nc.model(
         'Id': fields.Integer(),
         'FullNames': fields.String(),
         'Username': fields.String(),
-        'Password': fields.String(),
+        #'Password': fields.String(),
         'EmailAddress': fields.String(),
         'PhoneNumber': fields.String(),
         'DateOfBirth': fields.Date(),
-        'ProfilePicture': fields.String(),
+        #'ProfilePicture': fields.String(),
         'Address': fields.String(),
         'CreatedOn': fields.Date()
     }
@@ -54,22 +54,29 @@ class SignupResource(Resource):
         db.session.commit()
         return register_data, 200
     
+    method_decorators = [jwt_required()]
     @auth_nc.marshal_list_with(register_model, code = 200)
+    @jwt_required()
+    @auth_nc.doc(security = "jsonWebToken")
     def get(self):
         register_details = Users.query.all()
         return register_details, 200
 
 @auth_nc.route("/login")
 class LoginResource(Resource):
-    @auth_nc.marshal_with(login_model, code = 200)
+    #@auth_nc.marshal_with(login_model, code = 200)
     @auth_nc.expect(login_model)
     def post(self): 
         data = request.get_json()
         Username = data.get('Username')
         Password = data.get('Password')
-        
+
         data_user = Users.query.filter_by(Username = Username).first()
-        if data_user and check_password_hash(data_user.Password, Password):
-            access_token = create_access_token(identity=data_user.Username)
-            refresh_token = create_refresh_token(identity=data_user.Username)
-            return jsonify({ "access_token":access_token, "refresh_token": refresh_token })
+        if not data_user:
+            return { "error":"user does not exits!!" }
+        if not check_password_hash(data_user.Password, Password):
+            return { "error":"incorrect user password!!" }
+        
+        access_token = create_access_token(data_user.Username)
+        refresh_token = create_refresh_token(data_user.Username)
+        return jsonify({ "access_token":access_token, "refresh_token": refresh_token })

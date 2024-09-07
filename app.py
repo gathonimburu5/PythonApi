@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_restx import Api
-from model import db, Book, Student, Recipe, Post, Comment, Supplier, Users, Accounts
+from model import db, Book, Student, Recipe, Post, Comment, Supplier, Users, Accounts, Customer
 from flask_migrate import Migrate
+
 from auth import auth_nc
 from book import book_ns
 from comment import comment_nc
@@ -10,6 +11,8 @@ from recipe import recipe_nc
 from student import student_ns
 from supplier import supplier_nc
 from account import account_ns
+from customer import customer_ns
+
 from flask_jwt_extended import JWTManager
 from config import DevConfig
 
@@ -36,11 +39,23 @@ api.add_namespace(recipe_nc)
 api.add_namespace(student_ns)
 api.add_namespace(supplier_nc)
 api.add_namespace(account_ns)
+api.add_namespace(customer_ns)
     
 @app.shell_context_processor
 def make_shell_context():
-    return { 'db': db, 'Book': Book, 'Student' : Student, 'Recipe' : Recipe, 'Post' : Post, 'Comment' : Comment, 'Supplier': Supplier, 'Users': Users, 'Accounts': Accounts }
-        
+    return { 
+        'db': db, 
+        'Book': Book, 
+        'Student' : Student, 
+        'Recipe' : Recipe, 
+        'Post' : Post, 
+        'Comment' : Comment, 
+        'Supplier': Supplier, 
+        'Users': Users, 
+        'Accounts': Accounts,
+        'Customer': Customer
+     }
+       
 
 if __name__ == '__main__':
     app.run(host="localhost", debug=True, port=8888)
